@@ -1,25 +1,54 @@
-missing module named org - imported by copy
+missing module named pyimod03_importers - imported by C:\Python27\lib\site-packages\pyinstaller-3.2.1-py2.7.egg\PyInstaller\loader\rthooks\pyi_rth_pkgres.py
+missing module named 'pkg_resources.extern.pyparsing' - imported by pkg_resources._vendor.packaging.requirements, pkg_resources._vendor.packaging.markers
 missing module named readline - imported by cmd, pdb
-missing module named 'org.python' - imported by pickle, xml.sax
+missing module named pwd - imported by posixpath, getpass, shutil, tarfile, distutils.util, netrc
+missing module named org - imported by copy
+missing module named _sysconfigdata - imported by distutils.sysconfig, sysconfig
+missing module named pkg_resources.extern.packaging - imported by pkg_resources.extern, pkg_resources
+missing module named 'importlib.machinery' - imported by pkg_resources
+missing module named 'pkg_resources.extern.six.moves' - imported by pkg_resources, pkg_resources._vendor.packaging.requirements
+missing module named pkg_resources.extern.six - imported by pkg_resources.extern, pkg_resources
+missing module named _imp - imported by pkg_resources
 missing module named fcntl - imported by tempfile, subprocess
+missing module named _scproxy - imported by urllib
+missing module named EasyDialogs - imported by getpass
+missing module named termios - imported by getpass
+missing module named SOCKS - imported by ftplib
+missing module named rourl2path - imported by urllib
+missing module named 'org.python' - imported by pickle, xml.sax
+missing module named 'java.lang' - imported by platform, xml.sax._exceptions
+missing module named _xmlplus - imported by xml
+missing module named 'Carbon.File' - imported by plistlib
+missing module named 'Carbon.Files' - imported by plistlib
+missing module named Carbon - imported by plistlib
+missing module named vms_lib - imported by platform
+missing module named java - imported by platform
+missing module named MacOS - imported by platform
+missing module named macresource - imported by MacOS
+missing module named gestalt - imported by platform
+missing module named grp - imported by shutil, tarfile
 missing module named riscosenviron - imported by os
 missing module named riscospath - imported by os
 missing module named riscos - imported by os
 missing module named ce - imported by os
 missing module named _emx_link - imported by os
 missing module named os2 - imported by os
-missing module named pwd - imported by posixpath, getpass, shutil, tarfile
 missing module named posix - imported by os
 missing module named resource - imported by posix
-missing module named ElementC14N - imported by xml.etree.ElementTree
-missing module named _scproxy - imported by urllib
-missing module named EasyDialogs - imported by getpass
-missing module named termios - imported by getpass
-missing module named SOCKS - imported by ftplib
-missing module named rourl2path - imported by urllib
-missing module named java - imported by xml.sax._exceptions
-missing module named _xmlplus - imported by xml
+missing module named 'urllib.request' - imported by requests.compat
+missing module named 'urllib.parse' - imported by requests.compat
+missing module named 'requests.packages.urllib3.packages.six.moves' - imported by requests.packages.urllib3.exceptions, requests.packages.urllib3.connectionpool, requests.packages.urllib3.connection, requests.packages.urllib3.util.response, requests.packages.urllib3.request, requests.packages.urllib3.response, requests.packages.urllib3.poolmanager
 missing module named _dummy_threading - imported by dummy_threading
+missing module named backports - imported by requests.packages.urllib3.packages.ssl_match_hostname
+missing module named simplejson - imported by requests.compat
+missing module named chardet - imported by requests.packages
+missing module named urllib3 - imported by requests.packages
+missing module named socks - imported by requests.packages.urllib3.contrib.socks
+missing module named certifi - imported by requests.certs
+missing module named 'OpenSSL.crypto' - imported by requests.packages.urllib3.contrib.pyopenssl
+missing module named 'six.moves.urllib_parse' - imported by 'six.moves.urllib_parse'
+runtime module named six.moves - imported by cryptography.x509.general_name, cryptography.hazmat.backends.openssl.decode_asn1
+missing module named 'cryptography.hazmat.bindings._commoncrypto' - imported by cryptography.hazmat.bindings.commoncrypto.binding
+missing module named OpenSSL - imported by requests.packages.urllib3.contrib.pyopenssl
+missing module named ElementC14N - imported by xml.etree.ElementTree
 missing module named _xmlrpclib - imported by xmlrpclib
-missing module named _sysconfigdata - imported by distutils.sysconfig
-missing module named grp - imported by shutil, tarfile

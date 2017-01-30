@@ -5,6 +5,9 @@ import socket
 import sys
 
 import re
+from time import sleep
+
+import requests
 
 from l1_driver_resource_info import L1DriverResourceInfo
 from l1_handler_base import L1HandlerBase
@@ -175,6 +178,8 @@ class PolatisL1Handler(L1HandlerBase):
 
         netype = self._connection.command('RTRV-NETYPE:{name}::{counter}:;')
         m = re.search(r'"(?P<vendor>.*),(?P<model>.*),(?P<type>.*),(?P<version>.*)"', netype)
+        if not m:
+            m = re.search(r'(?P<vendor>.*),(?P<model>.*),(?P<type>.*),(?P<version>.*)', netype)
         if m:
             sw.set_attribute('Vendor', m.groupdict()['vendor'])
             sw.set_attribute('Hardware Type', m.groupdict()['type'])
@@ -265,7 +270,48 @@ class PolatisL1Handler(L1HandlerBase):
         self._logger.info('map_clear_to {} {}'.format(src_port, dst_port))
         min_port = min(int(src_port.split('/')[-1]), int(dst_port.split('/')[-1]))
         max_port = max(int(src_port.split('/')[-1]), int(dst_port.split('/')[-1]))
-        self._connection.command("DLT-PATCH:{name}:%d,%d:{counter}:;" % (min_port, max_port))
+
+        mapstr = '"%d,%d"' % (min_port, max_port)
+        before = self._connection.command("RTRV-PATCH:{name}::{counter}:;")
+        if mapstr not in before:
+            self._logger.warn('Mapping %s has already been removed' % mapstr)
+            return
+
+        try:
+            self._connection.command("DLT-PATCH:{name}:%d,%d:{counter}:;" % (min_port, max_port))
+        except:
+            self._logger.info('DLT-PATCH failed, attempting web unmap')
+            tries = 0
+            while True:
+                try:
+                    with requests.Session() as s:
+                        url = 'https://%s/cgi-bin/login' % self._host
+                        data = 'user=%s&passwd=%s' % (self._username, self._password)
+                        self._logger.info('url=%s data=%s' % (url, data))
+                        s.post(url,
+                               data=data,
+                               headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                               verify=False)
+
+                        url = 'https://%s/cgi-bin/setoxc' % self._host
+                        data = 'port1=%d&port2=%d' % (min_port, max_port)
+                        self._logger.info('url=%s data=%s' % (url, data))
+                        s.post(url,
+                               data=data,
+                               headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                               verify=False)
+                    self._logger.info('Web unmap returned without error')
+                    break
+                except Exception as e:
+                    tries += 1
+                    if tries > 20:
+                        raise Exception('Web unmap failed 20 times')
+                    self._logger.info('Exception from web unmap: %s; retrying' % str(e))
+                    sleep(10)
+
+        after = self._connection.command("RTRV-PATCH:{name}::{counter}:;")
+        if mapstr in after:
+            raise Exception('Failed to remove mapping %s' % mapstr)
 
     def map_clear(self, src_port, dst_port):
         """
@@ -273,10 +319,8 @@ class PolatisL1Handler(L1HandlerBase):
         :param dst_port: str
         :return: None
         """
-        self._logger.info('map_clear {} {}'.format(src_port, dst_port))
-        min_port = min(int(src_port.split('/')[-1]), int(dst_port.split('/')[-1]))
-        max_port = max(int(src_port.split('/')[-1]), int(dst_port.split('/')[-1]))
-        self._connection.command("DLT-PATCH:{name}:%d,%d:{counter}:;" % (min_port, max_port))
+        self._logger.info('map_clear delegating to map_clear_to {} {}'.format(src_port, dst_port))
+        self.map_clear_to(src_port, dst_port)
 
     def set_speed_manual(self, src_port, dst_port, speed, duplex):
         """
