@@ -2,9 +2,9 @@
 #
 # It should be unnecessary to edit this file.
 #
-# This file will be the entry point of Polatis7.exe
+# This file will be the entry point of PolatisPython.exe
 #
-# It will be invoked by CloudShell as Polatis7.exe <listening port number>
+# It will be invoked by CloudShell as PolatisPython.exe <listening port number>
 
 from cloudshell.core.logger.qs_logger import get_qs_logger
 from l1_driver import L1Driver

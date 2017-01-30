@@ -11,15 +11,20 @@ if %errorLevel% == 0 (
 
 pyinstaller --onefile driver.spec
 
-taskkill /f /im Polatis7.exe
+taskkill /f /im PolatisPython.exe
 
 sleep 3
 
-copy dist\Polatis7.exe                     "c:\Program Files (x86)\QualiSystems\TestShell\Server\Drivers"
-copy polatis_runtime_configuration.json "c:\Program Files (x86)\QualiSystems\TestShell\Server\Drivers"
+set driverdir="c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers"
+IF EXIST %driverdir% GOTO :havecs
+set driverdir="c:\Program Files (x86)\QualiSystems\TestShell\Server\Drivers"
+:havecs
+
+copy dist\PolatisPython.exe             %driverdir%
+copy polatis_python_runtime_configuration.json %driverdir%
 
 copy polatis_datamodel.xml               release\
-copy dist\Polatis7.exe                      release\
-copy polatis_runtime_configuration.json  release\
+copy dist\PolatisPython.exe              release\
+copy polatis_python_runtime_configuration.json  release\
 
 :fail

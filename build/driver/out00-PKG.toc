@@ -330,10 +330,10 @@
   ('adodbapi\\readme.txt',
    'c:\\python27\\lib\\site-packages\\pypiwin32-219-py2.7-win32.egg\\adodbapi\\readme.txt',
    'DATA'),
-  ('Polatis7.exe.manifest',
+  ('PolatisPython.exe.manifest',
    'C:\\Quali\\git\\cloudshell-L1-polatis\\build\\driver\\driver.exe.manifest',
    'BINARY'),
-  ('pyi-windows-manifest-filename Polatis7.exe.manifest', '', 'OPTION')],
+  ('pyi-windows-manifest-filename PolatisPython.exe.manifest', '', 'OPTION')],
  False,
  None,
  False)

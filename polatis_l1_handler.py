@@ -101,12 +101,10 @@ class PolatisRawConnection:
 
 class PolatisL1Handler(L1HandlerBase):
     def __init__(self, logger):
-        self._switch_family = 'L1 Switch'
+        self._switch_family = 'L1 Optical Switch'
         self._switch_model = 'Polatis'
-        self._blade_family = 'L1 Switch Blade'
-        self._blade_model = 'Polatis Blade'
-        self._port_family = 'L1 Switch Port'
-        self._port_model = 'Polatis Port'
+        self._port_family = 'L1 Optical Switch Port'
+        self._port_model = 'Port Polatis'
 
         self._logger = logger
 
@@ -117,7 +115,7 @@ class PolatisL1Handler(L1HandlerBase):
         self._connection = None
 
         try:
-            with open(os.path.join(os.path.dirname(sys.argv[0]), 'polatis_runtime_configuration.json')) as f:
+            with open(os.path.join(os.path.dirname(sys.argv[0]), 'polatis_python_runtime_configuration.json')) as f:
                 o = json.loads(f.read())
         except Exception as e:
             self._logger.warn('Failed to read JSON config file: ' + str(e))

@@ -2,11 +2,11 @@
 
 ## Installation
 Copy to c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers on CloudShell machine:
-- Polatis7.exe (If the EXE was downloaded directly from the web, be sure to right click the EXE, open Properties, and *UNBLOCK* the file)
-- polatis_runtime_configuration.json
+- PolatisPython.exe (If the EXE was downloaded directly from the web, be sure to right click the EXE, open Properties, and *UNBLOCK* the file)
+- polatis_python_runtime_configuration.json
 
 To customize the port, prompt, and other driver-specific settings, edit:
-- polatis_runtime_configuration.json
+- polatis_python_runtime_configuration.json
 
 Import polatis_datamodel.xml into Resource Manager
 
@@ -40,26 +40,26 @@ Import polatis_datamodel.xml into Resource Manager
 ### What to edit
 - polatis_l1_handler.py
   - Fill in the implementation for any relevant L1 driver functions: login, logout, get_resource_details, map_bidi, map_uni, map_clear, map_clear_to, get_attribute_value, get_state_id, set_state_id
-  - Load all settings from c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\\polatis_runtime_configuration.json
+  - Load all settings from c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\\polatis_python_runtime_configuration.json
   - Handle all communication with the device
     - e.g. paramiko
     - e.g. requests
 - polatis_datamodel.xml
   - Optionally customize the family or model names for the switch, blade, and port resources 
-- polatis_runtime_configuration.json
+- polatis_python_runtime_configuration.json
   - Set default values to be shipped in the default JSON file
   - Define new custom driver settings
   - See notes below
 
 ### compile_driver.bat
 - Run from a cmd command prompt &mdash; *NOTE: MUST BE RUNNING AS ADMINISTRATOR*
-- Kills all Polatis7.exe
+- Kills all PolatisPython.exe
 - Copies files to c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers:
-  - .\dist\\Polatis7.exe
-  - .\\polatis_runtime_configuration.json
+  - .\dist\\PolatisPython.exe
+  - .\\polatis_python_runtime_configuration.json
 - Copies files to release/ folder:
-  - .\dist\\Polatis7.exe
-  - .\\polatis_runtime_configuration.json
+  - .\dist\\PolatisPython.exe
+  - .\\polatis_python_runtime_configuration.json
   - .\\polatis_datamodel.xml
 
 ## Notes
@@ -68,14 +68,14 @@ The only .py you should need to edit is polatis_l1_handler.py.
 
 The address, username, and password of the switch resource become known to the driver only when 'login' is called. 
 
-The port number is not stored on the resource. If it can't just be hard coded in the driver, take the setting from c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\\polatis_runtime_configuration.json.
+The port number is not stored on the resource. If it can't just be hard coded in the driver, take the setting from c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\\polatis_python_runtime_configuration.json.
 
 ### JSON config
 The sample code includes hard-coding of default values for the JSON settings.
 
 CLI prompts on some switches can be completely arbitrary. A JSON setting is included for customizing the prompt regex. This is to avoid having to recompile the driver in the event that the customer switch has been given a bizarre prompt. If you don't have such prompt issues, you can delete all code related to this setting.
 
-polatis_runtime_configuration.json is not mandatory. If your driver doesn't need any runtime settings, you can delete all the code in polatis_l1_handler.py that deals with the JSON.
+polatis_python_runtime_configuration.json is not mandatory. If your driver doesn't need any runtime settings, you can delete all the code in polatis_l1_handler.py that deals with the JSON.
 
 ### Driver implementation tips
 
