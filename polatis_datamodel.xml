@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Version=1.2.0 -->
+<ResourceManagementExportImport xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/ExportImportConfigurationSchema.xsd">
+  <Tags>
+    <Tag Name="Available For Abstract Resources" />
+    <Tag Name="Configuration" />
+    <Tag Name="Constant Capability" />
+    <Tag Name="Link Configurations" />
+    <Tag Name="Setting" />
+    <Tag Name="Variable Capability" />
+  </Tags>
+  <Attributes>
+    <AttributeInfo Name="User" Type="String" DefaultValue="" IsReadOnly="false" IsCommand="false">
+      <Tags>
+        <TagName Name="Configuration" />
+      </Tags>
+    </AttributeInfo>
+    <AttributeInfo Name="Password" Type="Password" DefaultValue="" IsReadOnly="false" IsCommand="false">
+      <Tags>
+        <TagName Name="Configuration" />
+      </Tags>
+    </AttributeInfo>
+    <AttributeInfo Name="UniqueID" Type="String" DefaultValue="" IsReadOnly="false" IsCommand="false">
+      <Tags>
+        <TagName Name="Configuration" />
+      </Tags>
+    </AttributeInfo>
+    <AttributeInfo Name="Model" Type="String" DefaultValue="" IsReadOnly="false" IsCommand="false">
+      <Tags>
+        <TagName Name="Configuration" />
+      </Tags>
+    </AttributeInfo>
+    <AttributeInfo Name="Version" Type="String" DefaultValue="" IsReadOnly="false" IsCommand="false">
+      <Tags>
+        <TagName Name="Configuration" />
+      </Tags>
+    </AttributeInfo>
+    <AttributeInfo Name="Vendor" Type="String" DefaultValue="" IsReadOnly="false" IsCommand="false">
+      <Tags>
+        <TagName Name="Configuration" />
+      </Tags>
+    </AttributeInfo>
+    <AttributeInfo Name="Hardware Type" Type="String" DefaultValue="" IsReadOnly="false" IsCommand="false">
+      <Tags>
+        <TagName Name="Configuration" />
+      </Tags>
+    </AttributeInfo>
+    <AttributeInfo xsi:type="LookupAttributeDetails" Name="Protocol Type" Type="Lookup" DefaultValue="0" IsReadOnly="true" IsCommand="false">
+      <Tags>
+        <TagName Name="Configuration" />
+      </Tags>
+      <LookupValues>
+        <LookupValue NumericValue="0" StringValue="Transparent"/>
+      </LookupValues>
+    </AttributeInfo>
+    <AttributeInfo xsi:type="LookupAttributeDetails" Name="State" Type="Lookup" DefaultValue="0" IsReadOnly="true" IsCommand="false">
+      <Tags>
+        <TagName Name="Configuration" />
+      </Tags>
+      <LookupValues>
+        <LookupValue NumericValue="0" StringValue="Enable"/>
+        <LookupValue NumericValue="1" StringValue="Disable"/>
+      </LookupValues>
+    </AttributeInfo>
+
+  </Attributes>
+  <Modules>
+    <Module Name="Measurement">
+      <AttachedAttributes>
+        <AttributeName>Tag</AttributeName>
+      </AttachedAttributes>
+    </Module>
+    <Module Name="Test">
+      <AttachedAttributes>
+        <AttributeName>Tag</AttributeName>
+      </AttachedAttributes>
+    </Module>
+    <Module Name="Resource Module">
+      <AttachedAttributes />
+    </Module>
+  </Modules>
+  <ResourceFamilies>
+    <ResourceFamily Name="L1 Switch" IsMappableContainer="true" IsMappable="false" IsConnectable="false" IsLicenseCheckRequired="false" IsAllConnectedContainer="false" IsLockedByDefault="false" AcceptsMultipleConnections="false" Description="" SupportsMulticastMapping="false" SupportsLoopbackMapping="true" IsPowerSwitch="false" IsConsoleServer="false">
+      <AttachedAttributes>
+        <AttachedAttribute Name="User" IsOverridable="true" IsLocal="true">
+          <AllowedValues />
+        </AttachedAttribute>
+        <AttachedAttribute Name="Password" IsOverridable="true" IsLocal="true">
+          <AllowedValues />
+        </AttachedAttribute>
+      </AttachedAttributes>
+      <AttributeValues />
+      <Models>
+        <ResourceModel Name="Polatis" Description="" SupportsConcurrentCommands="false">
+          <AttachedAttributes>
+            <AttachedAttribute Name="Model" IsOverridable="true" IsLocal="true">
+              <AllowedValues />
+            </AttachedAttribute>
+            <AttachedAttribute Name="Version" IsOverridable="true" IsLocal="true">
+              <AllowedValues />
+            </AttachedAttribute>
+            <AttachedAttribute Name="Vendor" IsOverridable="true" IsLocal="true">
+              <AllowedValues />
+            </AttachedAttribute>
+            <AttachedAttribute Name="Hardware Type" IsOverridable="true" IsLocal="true">
+              <AllowedValues />
+            </AttachedAttribute>
+          </AttachedAttributes>
+          <AttributeValues />
+          <ParentModels />
+          <Drivers>
+            <DriverName>Polatis Driver 7</DriverName>
+          </Drivers>
+        </ResourceModel>
+      </Models>
+    </ResourceFamily>
+    <ResourceFamily Name="L1 Switch Blade" IsMappableContainer="false" IsMappable="false" IsConnectable="false" IsLicenseCheckRequired="false" IsAllConnectedContainer="false" IsLockedByDefault="false" AcceptsMultipleConnections="false" Description="" SupportsMulticastMapping="false" SupportsLoopbackMapping="true" IsPowerSwitch="false" IsConsoleServer="false">
+      <AttachedAttributes/>
+      <AttributeValues />
+      <Models>
+        <ResourceModel Name="Polatis Blade" Description="" SupportsConcurrentCommands="false">
+          <AttachedAttributes />
+          <AttributeValues />
+          <ParentModels>
+            <ParentModelName>Polatis</ParentModelName>
+          </ParentModels>
+          <Drivers/>
+        </ResourceModel>
+      </Models>
+    </ResourceFamily>
+    <ResourceFamily Name="L1 Switch Port" IsMappableContainer="false" IsMappable="true" IsConnectable="true" IsLicenseCheckRequired="false" IsAllConnectedContainer="false" IsLockedByDefault="true" AcceptsMultipleConnections="false" Description="" SupportsMulticastMapping="false" SupportsLoopbackMapping="true" IsPowerSwitch="false" IsConsoleServer="false">
+      <AttachedAttributes />
+      <AttributeValues />
+      <Models>
+        <ResourceModel Name="Polatis Port" SupportsConcurrentCommands="false">
+          <AttachedAttributes>
+            <AttachedAttribute Name="State" IsOverridable="true" IsLocal="true">
+              <AllowedValues />
+            </AttachedAttribute>
+            <AttachedAttribute Name="Protocol Type" IsOverridable="true" IsLocal="true">
+              <AllowedValues />
+            </AttachedAttribute>
+          </AttachedAttributes>
+          <AttributeValues/>
+          <ParentModels>
+            <ParentModelName>Polatis</ParentModelName>
+            <ParentModelName>Polatis Blade</ParentModelName>
+          </ParentModels>
+          <Drivers />
+        </ResourceModel>
+      </Models>
+    </ResourceFamily>
+    <ResourceFamily Name="DUT" IsMappableContainer="false" IsMappable="false" IsConnectable="false" IsLicenseCheckRequired="false" IsAllConnectedContainer="false" IsLockedByDefault="false" AcceptsMultipleConnections="false" Description="" SupportsMulticastMapping="false" SupportsLoopbackMapping="false" IsPowerSwitch="false" IsConsoleServer="false">
+      <AttachedAttributes />
+      <AttributeValues />
+      <Models>
+        <ResourceModel Name="Generic DUT" Description="" SupportsConcurrentCommands="false">
+          <AttachedAttributes />
+          <AttributeValues />
+          <ParentModels />
+          <Drivers />
+        </ResourceModel>
+      </Models>
+    </ResourceFamily>
+    <ResourceFamily Name="DUT Port" IsMappableContainer="false" IsMappable="false" IsConnectable="true" IsLicenseCheckRequired="false" IsAllConnectedContainer="false" IsLockedByDefault="false" AcceptsMultipleConnections="false" Description="" SupportsMulticastMapping="false" SupportsLoopbackMapping="false" IsPowerSwitch="false" IsConsoleServer="false">
+      <AttachedAttributes />
+      <AttributeValues />
+      <Models>
+        <ResourceModel Name="Generic Port" Description="" SupportsConcurrentCommands="false">
+          <AttachedAttributes />
+          <AttributeValues />
+          <ParentModels>
+            <ParentModelName>Generic DUT</ParentModelName>
+          </ParentModels>
+          <Drivers />
+        </ResourceModel>
+      </Models>
+    </ResourceFamily>
+	</ResourceFamilies>
+  <DriverDescriptors>
+    <DriverDescriptor Name="Polatis Driver 7" DriverType="L1SwitchTclDriver" CustomParams="Polatis7.exe" />
+    <DriverDescriptor Name="Patch Panel Driver" DriverType="L1SwitchDriver" />
+  </DriverDescriptors>
+</ResourceManagementExportImport>
