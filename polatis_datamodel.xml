@@ -151,7 +151,7 @@
       <AttachedAttributes />
       <AttributeValues />
       <Models>
-        <ResourceModel Name="Generic Port" Description="" SupportsConcurrentCommands="false">
+        <ResourceModel Name="Generic DUT Port" Description="" SupportsConcurrentCommands="false">
           <AttachedAttributes />
           <AttributeValues />
           <ParentModels>
