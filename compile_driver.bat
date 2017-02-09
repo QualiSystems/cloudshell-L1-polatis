@@ -13,7 +13,7 @@ pyinstaller --onefile driver.spec
 
 taskkill /f /im PolatisPython.exe
 
-sleep 3
+timeout 3
 
 set driverdir="c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers"
 IF EXIST %driverdir% GOTO :havecs
