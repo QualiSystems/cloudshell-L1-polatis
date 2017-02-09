@@ -1,0 +1,8 @@
+{
+  "common_variable": {
+    "connection_port": 3082
+  },
+  "driver_variable": {
+    "service_mode": "tl1"
+  }
+}
