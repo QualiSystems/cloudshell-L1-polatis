@@ -1,1 +1,8 @@
 *.pyc
+dist/*
+build/*
+.idea/*
+.idea
+build
+dist
+
