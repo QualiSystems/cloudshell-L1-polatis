@@ -22,7 +22,7 @@ set driverdir="c:\Program Files (x86)\QualiSystems\TestShell\Server\Drivers"
 
 copy dist\PolatisPython.exe             %driverdir%
 copy polatis_python_runtime_configuration.json %driverdir%
-
+mkdir release
 copy polatis_datamodel.xml               release\
 copy dist\PolatisPython.exe              release\
 copy polatis_python_runtime_configuration.json  release\
