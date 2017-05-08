@@ -1,41 +1,31 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+# CloudShell L1 main
+#
+# It should be unnecessary to edit this file.
+#
+# This file will be the entry point of PolatisPython.exe
+#
+# It will be invoked by CloudShell as PolatisPython.exe <listening port number>
 
+from cloudshell.core.logger.qs_logger import get_qs_logger
+from l1_driver import L1Driver
+from polatis_l1_handler import PolatisL1Handler
+import os
 import sys
 
-from common.configuration_parser import ConfigurationParser
-from common.helper.system_helper import get_file_folder
-from common.server_connection import ServerConnection
-from common.request_manager import RequestManager
-from common.request_handler import RequestHandler
+
+# LOG_PATH required for qs_logger startup
+os.environ['LOG_PATH'] = os.path.join(os.path.dirname(sys.argv[0]), '..', 'Logs')
+
+logger = get_qs_logger(log_group='Polatis',
+                       log_file_prefix='Polatis',
+                       log_category='INTERNAL')
 
 
-if __name__ == '__main__':
-    print 'Argument List: ', str(sys.argv)
+# Instantiate your implementation of L1HandlerBase
+handler = PolatisL1Handler(logger=logger)
 
-    host = '0.0.0.0'
-    port = 1024
-    if len(sys.argv) > 1:
-        port = int(sys.argv[1])
+# Instantiate standard L1 driver
+driver = L1Driver(listen_port=int(sys.argv[1]), handler=handler, logger=logger)
 
-    # exe_folder_str = get_file_folder(sys.argv[0])
-    # ConfigurationParser.set_root_folder(exe_folder_str)
-
-    exe_folder_str = get_file_folder(sys.argv[0])
-    ConfigurationParser.set_root_folder(exe_folder_str)
-    # ConfigurationParser.init()
-
-    request_handler = RequestHandler()
-
-    request_manager = RequestManager()
-    request_manager.bind_command('login', (RequestHandler.login, request_handler))
-    request_manager.bind_command('getresourcedescription', (RequestHandler.get_resource_description, request_handler))
-    request_manager.bind_command('setstateid', (RequestHandler.set_state_id, request_handler))
-    request_manager.bind_command('getstateid', (RequestHandler.get_state_id, request_handler))
-    request_manager.bind_command('mapbidi', (RequestHandler.map_bidi, request_handler))
-    request_manager.bind_command('mapclearto', (RequestHandler.map_clear_to, request_handler))
-    request_manager.bind_command('mapclear', (RequestHandler.map_clear, request_handler))
-
-    server_connection = ServerConnection(host, port, request_manager, exe_folder_str)
-
-    server_connection.start_listeninig()
+# Listen for commands forever - never returns
+driver.go()

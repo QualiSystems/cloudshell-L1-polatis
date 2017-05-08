@@ -4,8 +4,6 @@ block_cipher = None
 
 import os
 
-CS_L1_NETCORE = "../cloudshell-L1-networking-core"
-
 def add_data_files(related_path, root_path="."):
 
     path = os.path.join(root_path, related_path)
@@ -17,16 +15,10 @@ def add_data_files(related_path, root_path="."):
     return templates
 
 a = Analysis(['main.py'],
-             pathex=[".", CS_L1_NETCORE, "../cloudshell-core"],
+             pathex=["."],
              binaries=None,
              datas=[],
-             hiddenimports=[
-                "common.cli.tcp_session",
-                "common.cli.telnet_session",
-                "common.cli.console_session",
-                "common.cli.ssh_session",
-                "polatis.polatis_driver_handler"
-             ],
+             hiddenimports=[],
              hookspath=None,
              runtime_hooks=None,
              excludes=None,
@@ -38,14 +30,14 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(pyz,
           a.scripts,
-          a.binaries + add_data_files("configuration") + add_data_files("common/response_template", CS_L1_NETCORE) ,
+          a.binaries,
           a.zipfiles,
           a.datas,
-          name='Polatis',
+          name='PolatisPython',
           debug=False,
           strip=None,
           upx=True,
           console=True,
           version='version.txt',
-          icon=os.path.join(CS_L1_NETCORE, "img/icon.ico")
+          icon="img/icon.ico"
           )
