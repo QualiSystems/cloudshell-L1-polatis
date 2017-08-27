@@ -113,6 +113,7 @@ class PolatisL1Handler(L1HandlerBase):
         self._password = None
 
         self._connection = None
+        self.size = -1
 
         try:
             with open(os.path.join(os.path.dirname(sys.argv[0]), 'polatis_python_runtime_configuration.json')) as f:
@@ -159,7 +160,9 @@ class PolatisL1Handler(L1HandlerBase):
         if m:
             size1 = int(m.groupdict()['a'])
             size2 = int(m.groupdict()['b'])
-            size = size1 + size2
+            # size = size1 + size2
+            size = size1
+            self.size = size
         else:
             raise Exception('Unable to determine system size: %s' % psize)
 
@@ -196,6 +199,18 @@ class PolatisL1Handler(L1HandlerBase):
                 portaddr2partneraddr[a] = b
                 portaddr2partneraddr[b] = a
 
+        portaddr2partneraddr_fixed = {}
+        for p in portaddr2partneraddr:
+            p2 = portaddr2partneraddr[p]
+            if p > size:
+                p -= size
+                portaddr2partneraddr_fixed[p] = p2
+            elif p2 > size:
+                p2 -= size
+                portaddr2partneraddr_fixed[p2] = p
+
+        portaddr2partneraddr = portaddr2partneraddr_fixed
+
         portaddr2status = {}
         shutters = self._connection.command("RTRV-PORT-SHUTTER:{name}:1&&%d:{counter}:;" % size)
         for line in shutters.split('\n'):
@@ -204,26 +219,14 @@ class PolatisL1Handler(L1HandlerBase):
             if m:
                 portaddr2status[int(m.groups()[0])] = m.groups()[1]
 
-        # sidenames = ['A', 'B']
-        # sideaddrs = ['A', 'B']
-        #
+
         for portaddr in range(1, size+1):
-        # for side, start, end in [(0, 1, size1+1), (1, size1+1, size1+size2+1)]:
-        #     blade = L1DriverResourceInfo('Side %s' % sidenames[side],
-        #                                  '%s/%s' % (address, sideaddrs[side]),
-        #                                  self._blade_family,
-        #                                  self._blade_model,
-        #                                  serial='%s.%s' % (serial, sideaddrs[side]))
-        #     sw.add_subresource(blade)
-        #     for portaddr in range(start, end):
             if portaddr in portaddr2partneraddr:
                 mappath = '%s/%d' % (address, portaddr2partneraddr[portaddr])
-                # mappath = '%s/%s/%d' % (address, sideaddrs[1 if portaddr2partneraddr[portaddr] > size1 else 0], portaddr2partneraddr[portaddr])
             else:
                 mappath = None
             p = L1DriverResourceInfo('Port %0.4d' % portaddr,
                                      '%s/%d' % (address, portaddr),
-                                     # '%s/%s/%d' % (address, sideaddrs[side], portaddr),
                                      self._port_family,
                                      self._port_model,
                                      map_path=mappath,
@@ -231,7 +234,6 @@ class PolatisL1Handler(L1HandlerBase):
             p.set_attribute('State', 0 if portaddr2status.get(portaddr, 'open').lower() == 'open' else 1, typename='Lookup')
             p.set_attribute('Protocol Type', 0, typename='Lookup')
             sw.add_subresource(p)
-            # blade.add_subresource(p)
 
         self._logger.info('get_resource_description returning xml: [[[' + sw.to_string() + ']]]')
         return sw
@@ -242,8 +244,14 @@ class PolatisL1Handler(L1HandlerBase):
         :param dst_port: str
         :return: None
         """
-        self._logger.info('map_uni NOT IMPLEMENTED {} {}'.format(src_port, dst_port))
-        raise Exception('map_uni not implemented')
+        self._logger.info('map_uni {} {}'.format(src_port, dst_port))
+
+        src = int(src_port.split('/')[-1])
+        dst = int(dst_port.split('/')[-1])
+
+        # lower number must be the first in the command
+        self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (dst, src+self.size))
+
 
     def map_bidi(self, src_port, dst_port, mapping_group_name):
         """
@@ -254,9 +262,12 @@ class PolatisL1Handler(L1HandlerBase):
         """
         self._logger.info('map_bidi {} {} group={}'.format(src_port, dst_port, mapping_group_name))
 
-        min_port = min(int(src_port.split('/')[-1]), int(dst_port.split('/')[-1]))
-        max_port = max(int(src_port.split('/')[-1]), int(dst_port.split('/')[-1]))
-        self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (min_port, max_port))
+        src = int(src_port.split('/')[-1])
+        dst = int(dst_port.split('/')[-1])
+
+        # lower number must be the first in the command
+        self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (dst, src+self.size))
+        self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (src, dst+self.size))
 
     def map_clear_to(self, src_port, dst_port):
         """
@@ -265,10 +276,11 @@ class PolatisL1Handler(L1HandlerBase):
         :return: None
         """
         self._logger.info('map_clear_to {} {}'.format(src_port, dst_port))
-        min_port = min(int(src_port.split('/')[-1]), int(dst_port.split('/')[-1]))
-        # max_port = max(int(src_port.split('/')[-1]), int(dst_port.split('/')[-1]))
+        src = int(src_port.split('/')[-1])
+        dst = int(dst_port.split('/')[-1])
 
-        self._connection.command("DLT-PATCH:{name}:%d:{counter}:;" % (min_port))
+        # could arbitrarily clear either dst or src+self.size
+        self._connection.command("DLT-PATCH:{name}:%d:{counter}:;" % (src+self.size))
 
 
     def map_clear(self, src_port, dst_port):
@@ -277,8 +289,13 @@ class PolatisL1Handler(L1HandlerBase):
         :param dst_port: str
         :return: None
         """
-        self._logger.info('map_clear delegating to map_clear_to {} {}'.format(src_port, dst_port))
+        self._logger.info('map_clear {} {}'.format(src_port, dst_port))
+
+        self._logger.info('map_clear delegating to map_clear_to (1 of 2) {} {}'.format(src_port, dst_port))
         self.map_clear_to(src_port, dst_port)
+
+        self._logger.info('map_clear delegating to map_clear_to (2 of 2) {} {}'.format(dst_port, src_port))
+        self.map_clear_to(dst_port, src_port)
 
     def set_speed_manual(self, src_port, dst_port, speed, duplex):
         """
