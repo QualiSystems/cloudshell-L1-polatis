@@ -1,6 +1,0 @@
-{
-  "common_variable": {
-    "connection_port": 3082,
-    "port_mode": "logical"
-  }
-}

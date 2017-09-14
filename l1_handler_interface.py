@@ -1,6 +1,6 @@
 # CloudShell L1 resource handler interface
 #
-# It should be unnecessary to edit this file.
+# It is not necessary to edit this file.
 #
 # - All work for your L1 driver will be in a class that implements this interface
 # - An instance of your implementation class will be passed as input to L1Driver
@@ -10,7 +10,7 @@ from abc import abstractmethod
 from l1_driver_resource_info import L1DriverResourceInfo
 
 
-class L1HandlerBase:
+class L1HandlerInterface:
     @abstractmethod
     def login(self, address, username, password):
         """

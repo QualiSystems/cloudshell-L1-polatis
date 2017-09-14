@@ -3,6 +3,7 @@
     "connection_port": 3082
   },
   "driver_variable": {
-    "service_mode": "tl1"
+    "port_mode_logical_or_physical": "logical"
+
   }
 }

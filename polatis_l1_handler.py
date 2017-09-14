@@ -7,7 +7,7 @@ import sys
 import re
 
 from l1_driver_resource_info import L1DriverResourceInfo
-from l1_handler_base import L1HandlerBase
+from l1_handler_interface import L1HandlerInterface
 
 
 class PolatisRawConnection:
@@ -99,22 +99,11 @@ class PolatisRawConnection:
         self.connect()
 
 
-class PolatisL1Handler(L1HandlerBase):
+class PolatisL1Handler(L1HandlerInterface):
     def __init__(self, logger):
-        self._switch_family = 'L1 Optical Switch'
-        self._switch_model = 'Polatis'
-        self._port_family = 'L1 Optical Switch Port'
-        self._port_model = 'Port Polatis'
-
         self._logger = logger
 
-        self._host = None
-        self._username = None
-        self._password = None
-
-        self._connection = None
-        self.size = -1
-
+    def _get_json_settings(self):
         try:
             with open(os.path.join(os.path.dirname(sys.argv[0]), 'polatis_python_runtime_configuration.json')) as f:
                 o = json.loads(f.read())
@@ -122,9 +111,18 @@ class PolatisL1Handler(L1HandlerBase):
             self._logger.warn('Failed to read JSON config file: ' + str(e))
             o = {}
 
-        self._port = o.get("common_variable", {}).get("connection_port", 3082)
-        self._service_mode = o.get("driver_variable", {}).get("service_mode", "tl1").lower()
+        port3082 = o.get("common_variable", {}).get("connection_port", 3082)
 
+        islogical = o.get("driver_variable", {}).get("port_mode_logical_or_physical", "logical").lower() == 'logical'
+        # For 256x256, must be a mapping from number in the range 1..256 to number in the range 257..512 
+        portmap = o.get("driver_variable", {}).get("logical_port_pair_mapping", {})
+        for k in list(portmap.keys()):
+            if isinstance(k, str):
+                portmap[int(k)] = int(portmap[k])
+                del portmap[k]
+        
+        return port3082, islogical, portmap
+        
     def login(self, address, username, password):
         """
         :param address: str
@@ -133,11 +131,9 @@ class PolatisL1Handler(L1HandlerBase):
         :return: None
         """
         self._logger.info('Login called')
-        self._host = address
-        self._username = username
-        self._password = password
-
-        self._connection = PolatisRawConnection(address, self._port, username, password, self._logger)
+        port3082, logical, portmap = self._get_json_settings()
+        
+        self._connection = PolatisRawConnection(address, port3082, username, password, self._logger)
 
     def logout(self):
         """
@@ -147,25 +143,31 @@ class PolatisL1Handler(L1HandlerBase):
         self._connection.disconnect()
         self._connection = None
 
-    def get_resource_description(self, address):
-        """
-        :param address: str
-        :return: L1DriverResourceInfo
-        """
-
-        self._logger.info('get_resource_description called')
+    def _getsize(self):
+        _, islogical, _ = self._get_json_settings()
 
         psize = self._connection.command("RTRV-EQPT:{name}:SYSTEM:{counter}:::PARAMETER=SIZE;")
         m = re.search(r'SYSTEM:SIZE=(?P<a>\d+)x(?P<b>\d+)', psize)
         if m:
             size1 = int(m.groupdict()['a'])
             size2 = int(m.groupdict()['b'])
-            # size = size1 + size2
-            size = size1
-            self.size = size
+
+            if islogical:
+                return size1
+            else:
+                return size1 + size2
         else:
             raise Exception('Unable to determine system size: %s' % psize)
 
+    def get_resource_description(self, address):
+        """
+        :param address: str
+        :return: L1DriverResourceInfo
+        """
+        self._logger.info('get_resource_description called')
+        _, islogical, _ = self._get_json_settings()
+
+        size = self._getsize()
         pserial = self._connection.command("RTRV-INV:{name}:OCS:{counter}:;")
         m = re.search(r'SN=(\w+)', pserial)
         if m:
@@ -174,7 +176,7 @@ class PolatisL1Handler(L1HandlerBase):
             self._logger.warn('Failed to extract serial number: %s' % pserial)
             serial = '-1'
 
-        sw = L1DriverResourceInfo('', address, self._switch_family, self._switch_model, serial=serial)
+        sw = L1DriverResourceInfo('', address, 'L1 Optical Switch', 'Polatis', serial=serial)
 
         netype = self._connection.command('RTRV-NETYPE:{name}::{counter}:;')
         m = re.search(r'"(?P<vendor>.*),(?P<model>.*),(?P<type>.*),(?P<version>.*)"', netype)
@@ -199,17 +201,18 @@ class PolatisL1Handler(L1HandlerBase):
                 portaddr2partneraddr[a] = b
                 portaddr2partneraddr[b] = a
 
-        portaddr2partneraddr_fixed = {}
-        for p in portaddr2partneraddr:
-            p2 = portaddr2partneraddr[p]
-            if p > size:
-                p -= size
-                portaddr2partneraddr_fixed[p] = p2
-            elif p2 > size:
-                p2 -= size
-                portaddr2partneraddr_fixed[p2] = p
+        if islogical:
+            portaddr2partneraddr_fixed = {}
+            for p in portaddr2partneraddr:
+                p2 = portaddr2partneraddr[p]
+                if p > size:
+                    p -= size
+                    portaddr2partneraddr_fixed[p] = p2
+                elif p2 > size:
+                    p2 -= size
+                    portaddr2partneraddr_fixed[p2] = p
 
-        portaddr2partneraddr = portaddr2partneraddr_fixed
+            portaddr2partneraddr = portaddr2partneraddr_fixed
 
         portaddr2status = {}
         shutters = self._connection.command("RTRV-PORT-SHUTTER:{name}:1&&%d:{counter}:;" % size)
@@ -219,7 +222,6 @@ class PolatisL1Handler(L1HandlerBase):
             if m:
                 portaddr2status[int(m.groups()[0])] = m.groups()[1]
 
-
         for portaddr in range(1, size+1):
             if portaddr in portaddr2partneraddr:
                 mappath = '%s/%d' % (address, portaddr2partneraddr[portaddr])
@@ -227,8 +229,8 @@ class PolatisL1Handler(L1HandlerBase):
                 mappath = None
             p = L1DriverResourceInfo('Port %0.4d' % portaddr,
                                      '%s/%d' % (address, portaddr),
-                                     self._port_family,
-                                     self._port_model,
+                                     'L1 Optical Switch Port',
+                                     'Port Polatis',
                                      map_path=mappath,
                                      serial='%s.%d' % (serial, portaddr))
             p.set_attribute('State', 0 if portaddr2status.get(portaddr, 'open').lower() == 'open' else 1, typename='Lookup')
@@ -245,13 +247,21 @@ class PolatisL1Handler(L1HandlerBase):
         :return: None
         """
         self._logger.info('map_uni {} {}'.format(src_port, dst_port))
+        _, islogical, portmap = self._get_json_settings()
 
-        src = int(src_port.split('/')[-1])
-        dst = int(dst_port.split('/')[-1])
-
-        # lower number must be the first in the command
-        self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (dst, src+self.size))
-
+        if islogical:
+            src = int(src_port.split('/')[-1])
+            dst = int(dst_port.split('/')[-1])
+            # lower number must be the first in the command
+            a = dst
+            b = src
+            if b in portmap:
+                b = portmap[src]
+            else:
+                b += self._getsize()
+            self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (a, b))
+        else:
+            raise Exception('map_uni not available in physical port mode')
 
     def map_bidi(self, src_port, dst_port, mapping_group_name):
         """
@@ -261,13 +271,24 @@ class PolatisL1Handler(L1HandlerBase):
         :return: None
         """
         self._logger.info('map_bidi {} {} group={}'.format(src_port, dst_port, mapping_group_name))
+        _, islogical, portmap = self._get_json_settings()
 
         src = int(src_port.split('/')[-1])
         dst = int(dst_port.split('/')[-1])
 
-        # lower number must be the first in the command
-        self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (dst, src+self.size))
-        self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (src, dst+self.size))
+        if islogical:
+            size = None
+            for a, b in [(dst, src), (src, dst)]:
+                if b in portmap:
+                    b = portmap[b]
+                else:
+                    if not size:
+                        size = self._getsize()
+                    b += size
+                # lower number must be the first in the command
+                self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (a, b))
+        else:
+            self._connection.command("ENT-PATCH:{name}:%d,%d:{counter}:;" % (min(src, dst), max(src, dst)))
 
     def map_clear_to(self, src_port, dst_port):
         """
@@ -276,12 +297,15 @@ class PolatisL1Handler(L1HandlerBase):
         :return: None
         """
         self._logger.info('map_clear_to {} {}'.format(src_port, dst_port))
+        _, islogical, portmap = self._get_json_settings()
+
         src = int(src_port.split('/')[-1])
         dst = int(dst_port.split('/')[-1])
 
-        # could arbitrarily clear either dst or src+self.size
-        self._connection.command("DLT-PATCH:{name}:%d:{counter}:;" % (src+self.size))
-
+        if islogical:
+            self._connection.command("DLT-PATCH:{name}:%d:{counter}:;" % dst)
+        else:
+            self._connection.command("DLT-PATCH:{name}:%d:{counter}:;" % min(src, dst))
 
     def map_clear(self, src_port, dst_port):
         """
@@ -290,12 +314,16 @@ class PolatisL1Handler(L1HandlerBase):
         :return: None
         """
         self._logger.info('map_clear {} {}'.format(src_port, dst_port))
+        _, islogical, portmap = self._get_json_settings()
 
-        self._logger.info('map_clear delegating to map_clear_to (1 of 2) {} {}'.format(src_port, dst_port))
-        self.map_clear_to(src_port, dst_port)
-
-        self._logger.info('map_clear delegating to map_clear_to (2 of 2) {} {}'.format(dst_port, src_port))
-        self.map_clear_to(dst_port, src_port)
+        if islogical:
+            self._logger.info('map_clear delegating to map_clear_to (1 of 2) {} {}'.format(src_port, dst_port))
+            self.map_clear_to(src_port, dst_port)
+            self._logger.info('map_clear delegating to map_clear_to (2 of 2) {} {}'.format(dst_port, src_port))
+            self.map_clear_to(dst_port, src_port)
+        else:
+            self._logger.info('map_clear delegating to map_clear_to {} {}'.format(src_port, dst_port))
+            self.map_clear_to(src_port, dst_port)
 
     def set_speed_manual(self, src_port, dst_port, speed, duplex):
         """

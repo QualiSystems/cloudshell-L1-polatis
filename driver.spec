@@ -39,5 +39,5 @@ exe = EXE(pyz,
           upx=True,
           console=True,
           version='version.txt',
-          icon="img/icon.ico"
+          icon="icon.ico"
           )
