@@ -1,13 +1,13 @@
 # CloudShell L1 main
 #
-# It should be unnecessary to edit this file.
+# It is not necessary to edit this file.
 #
 # This file will be the entry point of PolatisPython.exe
 #
 # It will be invoked by CloudShell as PolatisPython.exe <listening port number>
 
 from cloudshell.core.logger.qs_logger import get_qs_logger
-from l1_driver import L1Driver
+from l1_driver import l1_driver_main_loop
 from polatis_l1_handler import PolatisL1Handler
 import os
 import sys
@@ -24,8 +24,5 @@ logger = get_qs_logger(log_group='Polatis',
 # Instantiate your implementation of L1HandlerBase
 handler = PolatisL1Handler(logger=logger)
 
-# Instantiate standard L1 driver
-driver = L1Driver(listen_port=int(sys.argv[1]), handler=handler, logger=logger)
-
 # Listen for commands forever - never returns
-driver.go()
+l1_driver_main_loop(handler=handler, listen_port=int(sys.argv[1]), logger=logger)
