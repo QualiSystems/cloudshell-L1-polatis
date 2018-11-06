@@ -72,7 +72,7 @@ class PolatisRawConnection:
                 raise Exception('End of recv stream without encountering termination pattern "%s"' % regex)
 
     def command(self, c):
-        c = c.replace('{name}', self._switch_name)
+        c = c.replace('{name}', '"' + self._switch_name + '"')
         self._counter += 1
         c = c.replace('{counter}', str(self._counter))
         prompt = r'M\s+%d\s+([a-zA-Z ]+)[^;]*;' % self._counter
