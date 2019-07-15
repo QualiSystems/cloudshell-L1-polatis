@@ -1,9 +1,0 @@
-{
-  "common_variable": {
-    "connection_port": 3082
-  },
-  "driver_variable": {
-    "port_mode_logical_or_physical": "logical"
-
-  }
-}

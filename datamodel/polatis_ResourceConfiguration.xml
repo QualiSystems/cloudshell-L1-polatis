@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceManagementExportImport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xmlns="http://schemas.qualisystems.com/ResourceManagement/ExportImportConfigurationSchema.xsd">
+    <Tags>
+        <Tag Name="Available For Abstract Resources"/>
+        <Tag Name="Configuration"/>
+        <Tag Name="Constant Capability"/>
+        <Tag Name="Link Configurations"/>
+        <Tag Name="Setting"/>
+        <Tag Name="Variable Capability"/>
+    </Tags>
+    <Attributes>
+        <AttributeInfo Name="OS Version" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="Serial Number" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="Model Name" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="Rx Power (dBm)" Type="String" DefaultValue="0" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="Tx Power (dBm)" Type="String" DefaultValue="0" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="Wavelength" Type="String" DefaultValue="0" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="Auto Negotiation" Type="Boolean" DefaultValue="True" IsReadOnly="false" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+                <TagName Name="Variable Capability"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo xsi:type="LookupAttributeDetails" Name="Duplex" Type="Lookup" DefaultValue="3" IsReadOnly="false"
+                       IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+                <TagName Name="Variable Capability"/>
+            </Tags>
+            <LookupValues>
+                <LookupValue NumericValue="2" StringValue="Half"/>
+                <LookupValue NumericValue="3" StringValue="Full"/>
+            </LookupValues>
+        </AttributeInfo>
+        <AttributeInfo Name="Password" Type="Password" DefaultValue="" IsReadOnly="false" IsCommand="false">
+            <Tags>
+                <TagName Name="Configuration"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo xsi:type="LookupAttributeDetails" Name="Protocol" Type="Lookup" DefaultValue="2"
+                       IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+            <LookupValues>
+                <LookupValue NumericValue="2" StringValue="Transparent"/>
+            </LookupValues>
+        </AttributeInfo>
+        <AttributeInfo Name="Protocol Value" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo xsi:type="LookupAttributeDetails" Name="Protocol Type" Type="Lookup" DefaultValue="0"
+                       IsReadOnly="true" IsCommand="false">
+            <Tags>
+                <TagName Name="Configuration"/>
+                <TagName Name="Constant Capability"/>
+            </Tags>
+            <LookupValues>
+                <LookupValue NumericValue="0" StringValue="Transparent"/>
+            </LookupValues>
+        </AttributeInfo>
+        <AttributeInfo Name="Protocol Type Value" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="Port Speed" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+                <TagName Name="Variable Capability"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="User" Type="String" DefaultValue="" IsReadOnly="false" IsCommand="false">
+            <Tags>
+                <TagName Name="Configuration"/>
+            </Tags>
+        </AttributeInfo>
+    </Attributes>
+    <Modules>
+        <Module Name="Measurement">
+            <AttachedAttributes>
+                <AttributeName>Tag</AttributeName>
+            </AttachedAttributes>
+        </Module>
+        <Module Name="Test">
+            <AttachedAttributes>
+                <AttributeName>Tag</AttributeName>
+            </AttachedAttributes>
+        </Module>
+        <Module Name="Resource Module">
+            <AttachedAttributes/>
+        </Module>
+    </Modules>
+    <ResourceFamilies>
+        <ResourceFamily Name="L1 Switch" IsMappableContainer="true" IsMappable="false"
+                        IsConnectable="false" IsLicenseCheckRequired="false" IsAllConnectedContainer="false"
+                        IsLockedByDefault="false" AcceptsMultipleConnections="false" Description=""
+                        SupportsMulticastMapping="true" SupportsLoopbackMapping="true" IsPowerSwitch="false"
+                        IsConsoleServer="false">
+            <AttachedAttributes>
+                <AttachedAttribute Name="User" IsOverridable="true" IsLocal="true">
+                    <AllowedValues/>
+                </AttachedAttribute>
+                <AttachedAttribute Name="Password" IsOverridable="true" IsLocal="true">
+                    <AllowedValues/>
+                </AttachedAttribute>
+            </AttachedAttributes>
+            <AttributeValues/>
+            <Models>
+                <ResourceModel Name="Polatis Chassis" Description="" SupportsConcurrentCommands="false">
+                    <AttachedAttributes>
+                        <AttachedAttribute Name="Model Name" IsOverridable="true" IsLocal="true">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Serial Number" IsOverridable="true" IsLocal="true">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="OS Version" IsOverridable="true" IsLocal="true">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                    </AttachedAttributes>
+                    <AttributeValues/>
+                    <ParentModels/>
+                    <Drivers>
+                        <DriverName>POLATIS</DriverName>
+                    </Drivers>
+                </ResourceModel>
+            </Models>
+        </ResourceFamily>
+        <ResourceFamily Name="L1 Switch Blade" IsMappableContainer="false" IsMappable="false"
+                        IsConnectable="false" IsLicenseCheckRequired="false" IsAllConnectedContainer="false"
+                        IsLockedByDefault="false" AcceptsMultipleConnections="false" Description=""
+                        SupportsMulticastMapping="false" SupportsLoopbackMapping="true" IsPowerSwitch="false"
+                        IsConsoleServer="false">
+            <AttachedAttributes/>
+            <AttributeValues/>
+            <Models>
+                <ResourceModel Name="Generic L1 Module" Description=""
+                               SupportsConcurrentCommands="false">
+                    <AttachedAttributes>
+                        <AttachedAttribute Name="Model Name" IsOverridable="true" IsLocal="true">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Serial Number" IsOverridable="true" IsLocal="true">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                    </AttachedAttributes>
+                    <AttributeValues/>
+                    <ParentModels>
+                        <ParentModelName>Polatis Chassis</ParentModelName>
+                    </ParentModels>
+                    <Drivers/>
+                </ResourceModel>
+            </Models>
+        </ResourceFamily>
+        <ResourceFamily Name="L1 Switch Port" IsMappableContainer="false" IsMappable="true"
+                        IsConnectable="true" IsLicenseCheckRequired="false" IsAllConnectedContainer="false"
+                        IsLockedByDefault="true" AcceptsMultipleConnections="false" Description=""
+                        SupportsMulticastMapping="false" SupportsLoopbackMapping="true" IsPowerSwitch="false"
+                        IsConsoleServer="false">
+            <AttachedAttributes/>
+            <AttributeValues/>
+            <Models>
+                <ResourceModel Name="Generic L1 Port" SupportsConcurrentCommands="false">
+                    <AttachedAttributes>
+                        <AttachedAttribute Name="Protocol" IsOverridable="true" IsLocal="false">
+                            <AllowedValues>
+                                <AllowedValue>2</AllowedValue>
+                            </AllowedValues>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Protocol Type" IsOverridable="true" IsLocal="false">
+                            <AllowedValues>
+                                <AllowedValue>0</AllowedValue>
+                            </AllowedValues>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Protocol Value" IsOverridable="true" IsLocal="false">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Protocol Type Value" IsOverridable="true" IsLocal="false">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Rx Power (dBm)" IsOverridable="true" IsLocal="false">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Tx Power (dBm)" IsOverridable="true" IsLocal="false">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Wavelength" IsOverridable="true" IsLocal="false">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Duplex" IsOverridable="true" IsLocal="false">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Auto Negotiation" IsOverridable="true" IsLocal="false">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute Name="Port Speed" IsOverridable="true" IsLocal="false">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                    </AttachedAttributes>
+                    <AttributeValues>
+                        <AttributeValue Name="Protocol" Value="2"/>
+                        <AttributeValue Name="Protocol Type" Value="0"/>
+                    </AttributeValues>
+                    <ParentModels>
+                        <ParentModelName>Generic L1 Module</ParentModelName>
+                        <ParentModelName>Polatis Chassis</ParentModelName>
+                    </ParentModels>
+                    <Drivers/>
+                </ResourceModel>
+            </Models>
+        </ResourceFamily>
+    </ResourceFamilies>
+    <DriverDescriptors>
+        <DriverDescriptor Name="POLATIS" DriverType="L1SwitchTclDriver"
+                          CustomParams="polatis.exe"/>
+    </DriverDescriptors>
+</ResourceManagementExportImport>

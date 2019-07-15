@@ -1,199 +1,214 @@
-# cloudshell-L1-Polatis
 
-## Installation
+![](cloudshell_logo.png)
 
-Obtain these files:
+# **Polatis L1 Shell**
 
-    PolatisPython.exe
-    polatis_python_runtime_configuration.json
-    polatis_datamodel.xml
+Release date: June 2019 
 
-Important: After downloading, right-click PolatisPython.exe, open Properties, 
-and ***unblock*** the EXE. Otherwise it will fail without an error message.
+Shell version: 1.0.0
 
-On the CloudShell machine, copy these files:
+Document version: 1.0
 
-    PolatisPython.exe
-    polatis_python_runtime_configuration.json
+# In This Guide
 
-to
-
-    c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers
-
-
-In Resource Manager, Admin, Resource Families, right-click the root of the tree, 'Import'
-
-    polatis_datamodel.xml
+* [Overview](#overview)
+* [Downloading the Shell](#downloading-the-shell)
+* [Importing and Configuring the Shell](#importing-and-configuring-the-shell)
+* [Updating Python Dependencies for Shells](#updating-python-dependencies-for-shells)
+* [Upgrading the L1 Shell and Datamodel](#upgrading-the-l1-shell-and-datamodel)
+* [Typical Workflows](#typical-workflows)
+* [References](#references)
+* [Release Notes](#release-notes)
 
 
-Log files will be written in c:\Program Files (x86)\QualiSystems\CloudShell\Server\Logs\Polatis\
+# Overview
+A shell integrates a device model, application or other technology with CloudShell. A shell consists of a data model that defines how the device and its properties are modeled in CloudShell, along with automation that enables interaction with the device via CloudShell.
 
-Note: On some systems, the base directory is
+### L1 Switch Shells
+L1 switch shells allow CloudShell to manage networking connectivity between physical resources and private cloud provider Apps, such as vCenter.
 
-    c:\Program Files (x86)\QualiSystems\TestShell\Server
-    
-instead of
+For additional information, see the [L1 Switches](http://help.quali.com/Online%20Help/9.0/Portal/Content/Admn/Cnct-Ctrl-L1-Swch.htm?Highlight=L1%20switch) online help topic.
 
-    c:\Program Files (x86)\QualiSystems\CloudShell\Server
+### **Polatis L1 Shell**
+The Polatis L1 shell provides you with the capability to communicate with network topology managed by the Polatis switch.
 
+The shell allows CloudShell users to interact with the device, for example, create and modify route mappings, get device information, and more.
 
-## Usage
+For more information on the **Polatis**, see the official **[Device Manufacturer]** product documentation.
 
-The driver supports two modes, logical and physical. Logical mode is more common.
+### Standard version
+The Polatis L1 shell is based on the [**Layer 1 Switch Shell Standard**](https://github.com/QualiSystems/shell-L1-template).
 
-### Logical mode
-In logical mode, an Rx/Tx pair (e.g. 1, 257) will be represented in CloudShell 
-as a single logical port (e.g. 1). When you model the Polatis connection to some device,
-you make a single connection in Resource Manager between the Polatis logical port and the 
-device port. This will be a single connection in CloudShell that represents two physical fibers.
+### Supported OS
+▪ [OS Name]
 
-If no custom Rx/Tx port number pairings are specified, the pairs are calculated automatically from 
-the size of the switch. For example, on a 256x256 switch, logical port 2 represents port 2 for Rx, port 258 for Tx. To use these default mappings, you would use this config file:
+### Requirements
 
-    {
-      "common_variable": {
-        "connection_port": 3082
-      },
-      "driver_variable": {
-        "port_mode_logical_or_physical": "logical"
-      }
-    }
+Release: **Polatis L1 Shell**
 
-If you have a different Rx/Tx mapping, you can explicitly specify it:
+▪ CloudShell version: 8.0 and above
 
-    {
-      "common_variable": {
-        "connection_port": 3082
-      },
-      "driver_variable": {
-        "port_mode_logical_or_physical": "logical",
-        "logical_port_pair_mapping": {
-          1: 512,
-          2: 511,
-          3: 510,
-          // ...
-          255: 258,
-          256: 257
-        }
-      }
-    }
+▪ Other: [version x.x]
 
-This example is for a 256x256 device.
+### Data Model
 
-Note that the same mapping will be used for all Polatis devices in CloudShell, regardless of size differences. 
+The shell's data model includes all shell metadata, families, and attributes.
 
+#### **Polatis Families and Models**
 
-### Physical mode
-In physical mode, each fiber Rx connector and Tx connector is modeled as a separate CloudShell port resource. To represent the Polatis connection to some device,
-you must model the Tx and Rx ports on the device as separate port resources, and you make two connections in Resource Manager between the
-Polatis Rx and Tx ports and the device Tx and Rx ports. In physical mode, you must manually keep track of the association between Rx and Tx ports. For example, on a 256x256 device,
-port 1 is Rx and the corresponding Tx is typically 1+256=257, but you can use any arbitrary pairings.
+The L1 switch families and models are listed in the following table:
 
+|Family|Model|Description|
+|:---|:---|:---|
+|L1 Switch|Polatis Chassis|L1 Switch Chassis|
+|L1 Switch Blade|Generic L1 Module|Generic L1 Module|
+|L1 Switch Port|Generic L1 Port|Generic L1 Port|
 
-Config file for physical mode:
+#### **Polatis Attributes**
 
-    {
-      "common_variable": {
-        "connection_port": 3082
-      },
-      "driver_variable": {
-        "port_mode_logical_or_physical": "physical"
-      }
-    }
+The Polatis Chassis attribute names and types are listed in the following table:
 
+|Attribute|Type|Description|
+|:---|:---|:---|
+|Model Name|String|Model name|
+|Serial Number|String|Serial number|
+|OS Version|String|OS version|
 
-- Import polatis_datamodel.xml into Resource Manager
-- Create L1 switch resource and set IP address, username, password
-- In Configuration view in Resource Manager, push Auto Load
-- Create multiple DUTs each with a port subresource
-- In Connections view of the L1 switch resource, connect the DUT ports
-- Create an empty reservation and add DUTs
-- Create a route between two DUTs
-- Connect the route
-- See log files in c:\Program Files (x86)\QualiSystems\CloudShell\Server\Logs\\Polatis_*\
+The Generic L1 Module attribute names and types are listed in the following table:
 
+|Attribute|Type|Description|
+|:---|:---|:---|
+|Model Name|String|Model name|
+|Serial Number|String|Serial number|
 
-## Development
+The Generic L1 Port attribute names and types are listed in the following table:
 
-### Prerequisites
-- Python 2.7 must be in %PATH%
-- Pip must be in %PATH%
+|Attribute|Type|Default|Description|
+|:---|:---|:---|:---|
+|Auto Negotiation|Boolean|True|Port auto negotiation|
+|Duplex|Lookup|Full|Port duplex|
+|Port Speed|String||Port speed|
+|Protocol|Lookup|Transparent|Port protocol|
+|Protocol Type Value|String ||Port protocol type value|
+|Protocol Value|String ||Port protocol value|
+|Rx Power (dBm)|String|0|Optical port Rx signal strength|
+|Tx Power (dBm)|String|0|Optical port Tx signal strength|
+|Wavelength|String|0|Optical port wavelength|
 
+### Automation
+This section describes the automation (drivers) associated with the data model. The shell’s driver is provided as part of the shell package. There are two types of automation processes, Autoload and Resource.  Autoload is executed when creating the resource in the **Inventory** dashboard, while resource commands are run in the sandbox.
 
-Download and extract the source bundle:
-    https://github.com/QualiSystems/cloudshell-L1-polatis/archive/master.zip
+|Command|Description|
+|:-----|:-----|
+|Autoload|Discovers and creates the internal resources of the root resource (for example, switch cards and ports).|
+|MapBidi|Creates a bi-directional mapping between two ports.|
+|MapUni|Creates a uni-directional mapping between two ports.|
+|MapClear|Clears any connection ending in this port.|
+|MapClearTo|Clears a uni-directional connection between two ports.|
+|GetAttributeValue|Extracts attribute values from the device.|
+|SetAttributeValue|Sets attribute values on the device.|
+|MapTap|Adds monitor ports to an existing connection.|
 
-Or if you have git:
-    git clone https://github.com/QualiSystems/cloudshell-L1-Polatis.git
+**Note:** You can only activate a TAP connection after activating a parent MapUni/MapBidi connection. 
 
+# Downloading the Shell
+The **Polatis** L1 shell is available from the [Quali Community Integrations](https://community.quali.com/integrations) page. 
 
-Run compile_driver.bat
+The shell comprises:
 
+|File name|Description|
+|:---|:---|
+|cloudshell-L1-polatis-x.x.x.zip|Polatis L1 shell package|
+|install_driver.bat|Polatis L1 shell installation script|
+|polatis_runtime_config.yml|Polatis L1 shell configuration file|
+|polatis_ResourceConfiguration.xml|XML file containing the resource structure, attributes and capabilities of the L1 switches of the same vendor|
 
-## Notes
+# Importing and Configuring the Shell
+This section describes how to import the L1 shell and configure and modify the shell’s devices.
 
-The only .py you should need to edit is polatis_l1_handler.py.
+### Importing and configuring the shell in CloudShell
 
-The address, username, and password of the switch resource become known to the driver only when 'login' is called. 
-
-The port number is not stored on the resource. If it can't just be hard coded in the driver, take the setting from c:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\\polatis_python_runtime_configuration.json.
-
-### JSON config
-The sample code includes hard-coding of default values for the JSON settings.
-
-CLI prompts on some switches can be completely arbitrary. A JSON setting is included for customizing the prompt regex. This is to avoid having to recompile the driver in the event that the customer switch has been given a bizarre prompt. If you don't have such prompt issues, you can delete all code related to this setting.
-
-polatis_python_runtime_configuration.json is not mandatory. If your driver doesn't need any runtime settings, you can delete all the code in polatis_l1_handler.py that deals with the JSON.
-
-### Driver implementation tips
-
-Even if your driver makes REST calls and doesn't maintain a persistent connection, you still need to implement 'login' to store the address, username, and password for later use by the mapping functions. 'login' will always be called at least once before mapping functions are called.    
-
-#### SSH
-
-For an SSH device, it is convenient to use Paramiko.
-
-    import paramiko
-    # ...
-        def receive(self):
-            # read until the prompt regex is found
-            prompt_regex = '>'
-            rv = ''
-            while True:
-                self.channel.settimeout(30)
-                r = self.channel.recv(2048)
-                if r:
-                    rv += r
-                t = re.sub(r'\x1b\[\d+m', '', rv)
-                if not r or len(re.findall(prompt_regex, t)) > 0:
-                    return t
-
-        def do_command(self, command):
-            self.channel.send(command + '\n')
-            return self.receive()
-            
-        def login(self, address, username, password)
-            self.ssh = paramiko.SSHClient()
-            # must store the SSHClient in a non-local variable to avoid garbage collection
-            self.ssh.load_system_host_keys()
-            self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.ssh.connect(address,
-                        port=22,
-                        username=username,
-                        password=password,
-                        look_for_keys=True)
-            self.channel = self.ssh.invoke_shell()
-            self.receive() # eat banner
-         
-
-Communication with your device may have unique timing requirements.
-
-You might have to handle SSH connections being automatically closed by the remote host.
-
-CloudShell may call login() automatically, but it may not be often enough to refresh the connection with some devices that disconnect frequently.    
-
-To log in with an RSA key file (id_rsa), pass look_for_keys=True to the SSH connect() as shown above. Paramiko will search for ~/.ssh/id_rsa. The driver runs in the system account, so the key file should be at C:\Windows\System32\Config\systemprofile\\.ssh\id_rsa. Continue to specify the username and password on the resource. The password will be used to decrypt the id_rsa file, and along with the username this key will be used to log in. This feature has never been tested with a blank password, so create the id_rsa with a password to be safe.    
-
-If you connect to a color terminal, the returned data may be polluted with control sequences in the form ESC[123m (regex: r'\x1b\\[\d+m'). This could interfere with your detection of the prompt regex. Buffer all the received data and look for the prompt regex in a separate copy of the data with the control sequences deleted.
+**To import and configure the shell in CloudShell:**
+  1. Make sure you have the shell’s zip package. If not, download the shell from the [Quali Community's Integrations](https://community.quali.com/integrations) page.
+  
+  2. Extract the *Polatis L1 shell zip* package to the following location on the Quali Server machine: 
+  *C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers*
+  
+  3. Run the *C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\cloudshell-L1-polatis\install_driver.bat* file.
+  
+  4. Import the new data model.
+      1. In **Resource Manager Client>Admin**, right-click **Resource Families** and select **Import**.
+      2. Select the *C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\cloudshell-L1-polatis\datamodel\polatis_ResourceConfiguration.xml* file.
+      3. Click **Open**.
+	
+  5. Create an L1 resource.
+      1. In **Resource Explorer**, right-click **Root** and select **New>Resource**.
+      2. Enter the **Name** and **Address**.
+      3. Select the **L1 Switch** family.
+      4. Ensure that the correct **Model** Polatis Chassis and **Driver** POLATIS are selected.
+      5. Click **OK**.
+	
+  6. Auto Load the new resource.
+      1. In **Resource Explorer**, right-click the new resource and select **Configuration**.
+      2. In the **Internal Resources** pane, right-click the switch and select **Exclude**. 
+      3. Click the **Auto Load** button at the bottom of the **Configuration** tab.
+	
+  7. Define the resource connections on the L1 switch.
+      1. Right-click the resource and select **Configuration>Connections**.
+      2. Connect a resource's port to a different port in the switch resource by clicking each port's **Connected To** button, selecting the resource's **Family** and **Resource**, and selecting the port to connect.
+      3. Click **OK** in the **Resource connection** dialog box.
+      4. Save your changes.
 
 
+### Offline installation of a shell
+Shell installation installs the required dependencies from the shell's zip package.
+
+The *install_driver.bat* script creates a virtual environment on the Quali Server machine under *C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\cloudshell-L1-polatis* and installs the required dependencies in this virtual environment from the extracted L1 shell folder (under *~cloudshell-L1-polatis\packages*).
+
+# Updating Python Dependencies for Shells
+This section explains how to update your Python dependencies folder. This is required when you upgrade a shell that uses new/updated dependencies. It applies to both online and offline dependencies. 
+
+L1 shells do not have separate Python dependencies files. All dependencies are included in the L1 shell itself and are installed along with the shell. Therefore, in order to update the shell's Python dependencies, you must upgrade the shell. See [Upgrading the L1 Shell and Datamodel](#upgrading-the-l1-shell-and-datamodel).
+
+# Upgrading the L1 Shell and Datamodel
+
+**Note:** Upgrading an L1 shell requires the use of the QsMigrationUtility, which is provided out-of-the-box with CloudShell.
+
+**To upgrade the L1 shell and datamodel:**
+1. In the Quali Server machine, remove or rename the L1 shell's folder located in the *Drivers* folder: *C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers*.
+
+2. Extract the new L1 shell to the *Drivers* folder: *C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers*.
+
+3. In the extracted L1 shell's folder, run *install_driver.bat*.
+
+4. Create a new folder: *C:\Program Files (x86)\QualiSystems\CloudShell\Server\Configuration*.
+
+5. Copy the upgraded shell's datamodel file from:
+
+	*C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\cloudshell-L1-polatis\datamodel\polatis_ResourceConfiguration.xml*
+	
+	to:
+	
+	*C:\Program Files (x86)\QualiSystems\CloudShell\Server\Configuration*.
+
+6. Run *C:\Program Files (x86)\QualiSystems\CloudShell\Server\QsMigrationUtility.exe*.
+
+
+# Typical Workflows
+
+(add as necessary depending on the shell)
+
+# References
+To download and share integrations, see [Quali Community's Integrations](https://community.quali.com/integrations). 
+
+For instructional training and documentation, see [Quali University](https://www.quali.com/university/).
+
+To suggest an idea for the product, see [Quali's Idea box](https://community.quali.com/ideabox). 
+
+To connect with Quali users and experts from around the world, ask questions and discuss issues, see [Quali's Community forums](https://community.quali.com/forums). 
+
+# Release Notes 
+
+### What's New
+
+For release updates, see the shell's [GitHub releases page](https://github.com/QualiSystems/cloudshell-L1-polatis/releases).

@@ -1,0 +1,18 @@
+language: python
+python:
+    - "2.7"
+
+install:
+    - 'if [ ${TRAVIS_BRANCH} \!= "master" ] && [ -f dev_requirements.txt ]; then
+        pip install --extra-index-url https://testpypi.python.org/pypi -r dev_requirements.txt;
+      else
+        pip install --extra-index-url https://testpypi.python.org/pypi -r requirements.txt;
+      fi'
+    - pip install -r test_requirements.txt
+    - pip install coveralls
+
+script:
+    - nosetests --with-coverage --cover-package=polatis tests
+
+after_success:
+    - coveralls

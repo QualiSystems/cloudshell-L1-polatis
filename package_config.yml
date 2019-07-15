@@ -1,0 +1,14 @@
+COLLECT_DEPENDENCIES: TRUE # TRUE/FALSE Collect offline dependencies
+PACKAGE_FILES:               # Files will be added to the driver's package zip
+  - datamodel
+  - main.py
+  - install_driver.bat
+  - driver_exe_template
+  - requirements.txt
+  - version.txt
+  - INSTALL.txt
+  - polatis_runtime_config.yml
+  - package_config.yml
+  - cloudshell_logo.png
+#  - test_requirements.txt
+#  - tests

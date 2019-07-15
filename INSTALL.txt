@@ -1,0 +1,3 @@
+Installation steps
+1. Extract the driver's package to Drivers folder, usually this is C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers
+2. In the extracted driver's folder run install_driver.bat
