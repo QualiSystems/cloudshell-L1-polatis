@@ -75,28 +75,31 @@ class AutoloadActions(object):
         """ Determine ports status """
 
         port_status = {}
-        output = CommandTemplateExecutor(self._cli_service, command_template.SHUTTERS).execute_command(size=size)
-        for port, status in re.findall(r'"(?P<port>\d+):(?P<status>\S+)"', output):
-            port_status[int(port)] = status
-
-        return port_status
+        try:
+            output = CommandTemplateExecutor(self._cli_service, command_template.SHUTTERS).execute_command(size=size)
+            for port, status in re.findall(r'"(?P<port>\d+):(?P<status>\S+)"', output):
+                port_status[int(port)] = status
+        finally:
+            return port_status
 
     def get_port_power(self, ports_count):
         """ Determine ports power """
 
         port_power = {}
-        output = CommandTemplateExecutor(self._cli_service, command_template.POWER).execute_command(size=ports_count)
-        for port, power in re.findall(r'"(?P<port>\d+):(?P<power>\S+)"', output):
-            port_power[int(port)] = power
-
-        return port_power
+        try:
+            output = CommandTemplateExecutor(self._cli_service, command_template.POWER).execute_command(size=ports_count)
+            for port, power in re.findall(r'"(?P<port>\d+):(?P<power>\S+)"', output):
+                port_power[int(port)] = power
+        finally:
+            return port_power
 
     def get_port_wavelength(self, ports_count):
         """ Determine ports wavelength """
 
         port_wavelength = {}
-        output = CommandTemplateExecutor(self._cli_service, command_template.WAVE).execute_command(size=ports_count)
-        for port, wave in re.findall(r'"(?P<port>\d+):(?P<wave>\S+?),.*"', output):
-            port_wavelength[int(port)] = wave
-
-        return port_wavelength
+        try:
+            output = CommandTemplateExecutor(self._cli_service, command_template.WAVE).execute_command(size=ports_count)
+            for port, wave in re.findall(r'"(?P<port>\d+):(?P<wave>\S+?),.*"', output):
+                port_wavelength[int(port)] = wave
+        finally:
+            return port_wavelength
