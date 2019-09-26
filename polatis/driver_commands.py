@@ -50,13 +50,6 @@ class DriverCommands(DriverCommandsInterface):
 
         return self.total_ports_count, self.logical_ports_count
 
-            # if self._is_logical_port_mode:
-            #     self.device_size = min(size1, size2)
-            # else:
-            #     self.device_size = size1 + size2
-        #
-        # return self.device_size
-
     def login(self, address, username, password):
         """
         Perform login operation on the device
@@ -133,11 +126,16 @@ class DriverCommands(DriverCommandsInterface):
             ports_power = autoload_actions.get_port_power(ports_count=total_ports_count)
             ports_wavelength = autoload_actions.get_port_wavelength(ports_count=total_ports_count)
 
+            self._logger.debug("PORT MODE: {}".format(self._is_logical_port_mode))
+
             ports = {}
-            for port_addr in range(1, logical_ports_count if self._is_logical_port_mode else total_ports_count + 1):
+            ports_len = len(str(total_ports_count))
+            for port_addr in range(1, (logical_ports_count if self._is_logical_port_mode else total_ports_count) + 1):
 
                 port_serial = "{sw_serial}.{port_addr}".format(sw_serial=serial_number, port_addr=port_addr)
-                port = Port(port_addr, "Generic L1 Port", port_serial)
+                port_id = "{:0{}d}".format(port_addr, ports_len)
+                self._logger.debug("Port id : {}".format(port_id))
+                port = Port(port_id, "Generic L1 Port", port_serial)
 
                 ports[port_addr] = port
                 port.set_parent_resource(chassis)
@@ -145,7 +143,7 @@ class DriverCommands(DriverCommandsInterface):
 
                 if self._is_logical_port_mode:
                     port.set_tx_power(ports_power.get(port_addr, 0))
-                    port.set_rx_power(ports_power.get(port_addr, 0) + logical_ports_count)
+                    port.set_rx_power(ports_power.get(port_addr + logical_ports_count, 0))
                 else:
                     port_power = ports_power.get(port_addr, 0)
                     if port_addr <= logical_ports_count:
@@ -174,7 +172,9 @@ class DriverCommands(DriverCommandsInterface):
             with self._cli_handler.default_mode_service() as session:
                 mapping_actions = MappingActions(session, self._logger)
 
-                src = int(src_port.split('/')[-1])
+                _, logical_ports_count = self._get_device_size(session=session)
+
+                src = int(src_port.split('/')[-1]) + logical_ports_count
                 for dst_port in dst_ports:
                     dst = int(dst_port.split('/')[-1])
                     mapping_actions.map_uni(src, dst)
