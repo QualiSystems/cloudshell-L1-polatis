@@ -16,5 +16,5 @@ from cloudshell.cli.command_template.command_template import CommandTemplate
 # MAP_CLEAR = CommandTemplate('map {port} clear-all', ACTION_MAP, ERROR_MAP)
 
 
-PORT_MAP = CommandTemplate("ENT-PATCH:<name>:{dst_port},{src_port}:<counter>:;")
-MAP_CLEAR = CommandTemplate("DLT-PATCH:<name>:{port}:<counter>:;")
+PORT_MAP = CommandTemplate("ENT-PATCH:\"<name>\":{dst_port},{src_port}:<counter>:;")
+MAP_CLEAR = CommandTemplate("DLT-PATCH:\"<name>\":{port}:<counter>:;")
