@@ -1,0 +1,21 @@
+[tool.ruff]
+target-version = "py39"
+select = ["E", "F", "W", "I", "N", "D", "UP", "A", "C4", "T20", "TID"]
+ignore = [
+"D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107", "D203", "D213", "D401"
+]
+
+[tool.ruff.isort]
+known-first-party = ["cloudshell"]
+known-local-folder = ["polatis", "tests"]
+
+[tool.mypy]
+python_version = "3.9"
+strict = false
+
+[[tool.mypy.overrides]]
+module = [
+    "cloudshell.layer_one.core.*",
+    "cloudshell.cli.*"
+]
+ignore_missing_imports = true
